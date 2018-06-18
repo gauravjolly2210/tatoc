@@ -1,0 +1,89 @@
+package dice;
+
+import java.util.Set;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+
+public class sle {
+	
+	public static void main(String[] args) throws InterruptedException {
+		
+		System.setProperty("webdriver.chrome.driver","/home/qainfotech/Downloads/chromedriver");
+		WebDriver driver=new ChromeDriver();
+		driver.get("http://10.0.1.86/tatoc");
+		Thread.sleep(1000);
+		driver.findElement(By.linkText("Basic Course")).sendKeys(Keys.ENTER);
+		Thread.sleep(1000);
+		driver.findElement(By.className("greenbox")).click();
+		Thread.sleep(1000);
+//	***********************************************************************************************
+	
+		Thread.sleep(1000);
+		driver.switchTo().frame("main");
+		String qcolor=driver.findElement(By.id("answer")).getAttribute("class");
+		
+		String acolor;
+			
+		System.out.println(qcolor);
+		while(true){
+			driver.findElement(By.linkText("Repaint Box 2")).click();
+			driver.switchTo().frame("child");
+			acolor=driver.findElement(By.id("answer")).getAttribute("class");
+			System.out.println(acolor);
+			driver.switchTo().parentFrame();
+			if(qcolor.equals(acolor)) {
+				driver.findElement(By.linkText("Proceed")).click();
+				break;
+			}
+			
+		}
+		
+		
+//*************************************************************************************************
+		driver.switchTo().defaultContent();
+		//Element which needs to drag.    		
+		Thread.sleep(1000);
+		WebElement from=driver.findElement(By.id("dragbox"));
+     
+     //Element on which need to drop.		
+     WebElement to=driver.findElement(By.id("dropbox"));					
+     		
+     //Using Action class for drag and drop.		
+     Actions act=new Actions(driver);					
+
+//Dragged and dropped.		
+     act.dragAndDrop(from, to).build().perform();	
+     driver.findElement(By.linkText("Proceed")).click();
+     
+     
+     //**********************************************************************************************
+     Thread.sleep(1000);
+     
+     driver.findElement(By.linkText("Launch Popup Window")).click();
+     String parentWindow=driver.getWindowHandle();
+     
+     String subWindow=null;
+     Set<String> handles=driver.getWindowHandles();
+     for(String h:handles) {
+    	 subWindow=h;
+     }
+     //***************************************************************************************
+     
+     driver.switchTo().window(subWindow);
+     System.out.println(driver.getCurrentUrl());
+     Thread.sleep(2000);
+     driver.findElement(By.id("name")).sendKeys("name");
+     driver.findElement(By.id("submit")).click();
+     
+     driver.switchTo().window(parentWindow); 
+     driver.findElement(By.linkText("Proceed")).click();
+
+     Thread.sleep(1000);
+     
+     
+	}
+
+}
